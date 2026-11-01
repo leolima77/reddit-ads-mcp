@@ -1,0 +1,26 @@
+name: Publish to PyPI
+
+# Uses PyPI "trusted publishing" (no API token stored in GitHub). One-time setup:
+# PyPI -> your project -> Publishing -> add this repository, workflow "publish.yml",
+# environment "pypi". Then push a tag such as v0.1.0.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build
+      - run: python -m build
+      - uses: pypa/gh-action-pypi-publish@release/v1
